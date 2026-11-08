@@ -116,6 +116,8 @@ h3.sec { margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--
 .team.win { color: var(--ink); font-weight: 700; }
 .team.loss { color: var(--muted); }
 .score { font-weight: 700; font-size: 1.5rem; line-height: 1; letter-spacing: -.02em; color: var(--ink); white-space: nowrap; text-align: center; min-width: 3.6em; font-variant-numeric: tabular-nums; }
+.score.live { color: var(--releg); }
+.live-tag { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 3px; }
 .score.ko { font-size: .82rem; font-weight: 600; letter-spacing: .04em; color: var(--muted); }
 .probs { grid-column: 1 / -1; display: grid; gap: 6px; }
 .bar { display: flex; height: 2px; background: var(--line); }
@@ -383,14 +385,14 @@ footer #stamp { color: var(--text); }
 
 
   function matchRow(L, g) {
-    var h = teamName(L, g[1]), a = teamName(L, g[2]), played = g[3] !== null && g[3] !== undefined;
+    var h = teamName(L, g[1]), a = teamName(L, g[2]), played = g[3] !== null && g[3] !== undefined, isLive = g[5] === "live";
     var hc = "", ac = "";
     if (played) { if (g[3] > g[4]) { hc = "win"; ac = "loss"; } else if (g[4] > g[3]) { ac = "win"; hc = "loss"; } }
     var mid = played
-      ? '<span class="score" aria-label="Full time ' + g[3] + " to " + g[4] + '">' + g[3] + "–" + g[4] + "</span>"
+      ? '<span class="score' + (isLive ? ' live' : '') + '" aria-label="' + (isLive ? "Live, " : "Full time ") + g[3] + " to " + g[4] + '">' + (isLive ? '<small class="live-tag">Live</small>' : '') + g[3] + "–" + g[4] + "</span>"
       : '<span class="score ko">' + esc(fmtTime.format(new Date(g[0]))) + "</span>";
     var probs = "";
-    if (!played && g[5]) {
+    if (!played && Array.isArray(g[5])) {
       var p = g[5];
       probs = '<div class="probs"><div class="bar" aria-hidden="true"><i class="h" style="width:' + p[0] + '%"></i><i class="d" style="width:' + p[1] + '%"></i><i class="a" style="width:' + p[2] + '%"></i></div>' +
         '<div class="plabels"><span>Home ' + Math.round(p[0]) + "%</span><span>Draw " + Math.round(p[1]) + "%</span><span>Away " + Math.round(p[2]) + "%</span></div></div>";
@@ -758,11 +760,34 @@ footer #stamp { color: var(--text); }
   renderRail();
 
   function getJSON(path) { return fetch(path, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(path); return r.json(); }); }
-  Promise.all([getJSON("data.json"), getJSON("posts.json").catch(function () { return { posts: [] }; })]).then(function (res) {
+  var LIVE_URL = "https://futanalyst-data.juanpablobrey.workers.dev/";
+  function getLive() {
+    var ctl = ("AbortController" in window) ? new AbortController() : null, timer = setTimeout(function () { if (ctl) ctl.abort(); }, 7000);
+    return fetch(LIVE_URL, { cache: "no-store", signal: ctl ? ctl.signal : undefined }).then(function (r) {
+      clearTimeout(timer); if (!r.ok) throw new Error("live " + r.status); return r.json();
+    }).catch(function () { clearTimeout(timer); return null; });
+  }
+  function mergeLive(base, live) {
+    if (!live || !live.leagues) return false;
+    var ok = false;
+    LEAGUES.forEach(function (id) {
+      var L = live.leagues[id];
+      if (L && L.table && L.table.length && base.leagues[id]) { base.leagues[id].table = L.table; base.leagues[id].games = L.games || []; ok = true; }
+    });
+    if (ok) base.updated = live.updated;
+    return ok;
+  }
+  function setStamp() { $("stamp").textContent = "Updated " + fmtStamp.format(new Date(data.updated)); }
+  setInterval(function () {
+    if (!data || document.hidden || $("composer")) return;
+    getLive().then(function (live) { if (mergeLive(data, live)) { setStamp(); if (!article && league !== "about") render(); } });
+  }, 300000);
+  Promise.all([getJSON("data.json"), getJSON("posts.json").catch(function () { return { posts: [] }; }), getLive()]).then(function (res) {
     data = res[0]; posts = (res[1] && res[1].posts) || [];
+    mergeLive(data, res[2]);
     LEAGUES.forEach(function (id) { if (data.leagues[id]) data.leagues[id]._id = id; });
     assignSlugs();
-    $("stamp").textContent = "Updated " + fmtStamp.format(new Date(data.updated));
+    setStamp();
     render();
   }).catch(function () {
     $("stamp").textContent = "Data unavailable";
