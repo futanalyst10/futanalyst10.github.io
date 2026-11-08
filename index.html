@@ -238,7 +238,7 @@ footer #stamp { color: var(--text); }
 <footer>
   <div class="wrap">
     <span>Scores and tables via SportRadar. Win probabilities are pre-match model estimates. Transfer fees in £m as reported.</span>
-    <span>Analysis by Juan Pablo Baquero · @futanalyst10 on TikTok</span>
+    <span>Analysis by Juan Pablo Baquero</span>
     <span id="stamp">Loading…</span>
   </div>
 </footer>
@@ -483,7 +483,6 @@ footer #stamp { color: var(--text); }
         return '<button class="row-btn" data-goto="' + target(p) + '"><span class="r-lg">' + esc(leagueShort(p.league)) + '</span><span class="r-main">' + esc(p.title) + '</span><span class="r-go" aria-hidden="true">→</span></button>';
       }).join("") + "</div></section>";
     }
-    html += '<section class="follow reveal"><p>New breakdowns land on TikTok first.</p><a class="cta" href="https://www.tiktok.com/@futanalyst10" target="_blank" rel="noopener">Follow @futanalyst10</a></section>';
     return html;
   }
 
