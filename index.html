@@ -98,7 +98,6 @@ a { color: var(--ink); }
 
 main .wrap { padding-block: 26px 72px; display: grid; gap: 40px; }
 .is-home main .wrap { padding-top: 56px; gap: 64px; }
-.splash-bg { will-change: transform; }
 
 .strap { display: grid; gap: 6px; }
 .strap h2 { margin: 0; font-weight: 800; font-size: clamp(2.6rem, 11vw, 4.4rem); line-height: .86; letter-spacing: -.05em; text-transform: uppercase; color: var(--stone); text-wrap: balance; }
@@ -635,7 +634,6 @@ footer #stamp { color: var(--text); }
     if (!sp) return;
     var y = window.scrollY, h = sp.offsetHeight || 1, k = Math.min(1, y / (h * 0.7));
     var bg = sp.querySelector(".splash-bg"), inn = sp.querySelectorAll(".splash-in, .splash-mid, .splash-low");
-    if (bg) bg.style.transform = "translate3d(0," + (y * 0.35).toFixed(1) + "px,0) scale(1.04)";
     inn.forEach(function (el) { el.style.opacity = (1 - k).toFixed(3); });
   }
   if (!reduceMotion) window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onSplashScroll); } }, { passive: true });
