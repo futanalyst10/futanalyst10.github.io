@@ -89,10 +89,16 @@ a { color: var(--ink); }
 @media (max-width: 699px) { .splash-mid { padding-right: max(10px, env(safe-area-inset-right, 0px)); } .splash-x { max-width: 38%; font-size: .86rem; } }
 @media (min-width: 700px) { .splash-x { max-width: 26ch; font-size: 1rem; } }
 .splash-foot { display: flex; justify-content: space-between; gap: 12px; font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(236,231,227,.8); }
-.scroll-btn { border: 0; background: none; padding: 0; min-height: 32px; color: #fff; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+.splash-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; }
+.scroll-cue { justify-self: center; display: grid; place-items: center; width: 56px; height: 76px; border: 0; background: none; padding: 0; cursor: pointer; transition: opacity .3s; }
+.cue-track { position: relative; display: block; width: 1px; height: 64px; background: rgba(236,231,227,.28); overflow: hidden; }
+.cue-dot { position: absolute; left: 0; top: -24px; width: 1px; height: 24px; background: #fff; animation: cue-run 2.1s cubic-bezier(.6,0,.4,1) infinite; }
+@keyframes cue-run { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(88px); opacity: 0; } }
+.scrolled .scroll-cue { opacity: 0; }
 
 main .wrap { padding-block: 26px 72px; display: grid; gap: 40px; }
 .is-home main .wrap { padding-top: 56px; gap: 64px; }
+.splash-bg { will-change: transform; }
 
 .strap { display: grid; gap: 6px; }
 .strap h2 { margin: 0; font-weight: 800; font-size: clamp(2.6rem, 11vw, 4.4rem); line-height: .86; letter-spacing: -.05em; text-transform: uppercase; color: var(--stone); text-wrap: balance; }
@@ -194,6 +200,39 @@ td.pts { font-weight: 700; color: var(--ink); }
 .will-reveal .reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
 .will-reveal .reveal.in { opacity: 1; transform: none; }
 
+/* article page */
+.story { display: grid; gap: 16px; }
+.back { justify-self: start; border: 0; background: none; padding: 8px 0; min-height: 40px; color: var(--muted); cursor: pointer; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.back:hover { color: var(--ink); }
+.story-h { margin: 0; font-weight: 800; font-size: clamp(2.4rem, 10vw, 4.6rem); line-height: .88; letter-spacing: -.05em; text-transform: uppercase; color: var(--ink); text-wrap: balance; }
+.story-pitch { margin: 6px 0 0; justify-items: start; }
+.story-body { font-size: 1.1rem; line-height: 1.75; padding-top: 8px; }
+.share { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding-top: 14px; border-top: 1px solid var(--line); margin-top: 8px; }
+.share-url { flex: 1 1 100%; min-width: 0; background: var(--sunk); border: 1px solid var(--line); color: var(--ink); padding: 10px 12px; border-radius: 2px; }
+.title-link { color: inherit; text-decoration: none; }
+.title-link:hover { color: var(--stone); }
+a.row-btn { text-decoration: none; }
+a.row-btn:hover .r-main { color: var(--stone); }
+footer a { color: var(--text); }
+
+/* about page */
+.about { display: grid; gap: 22px; }
+.about-name { margin: 0; font-weight: 800; font-size: clamp(2.8rem, 12vw, 5.6rem); line-height: .86; letter-spacing: -.055em; text-transform: uppercase; color: var(--stone); }
+.about-photos { display: grid; grid-template-columns: 3fr 2fr; gap: 10px; align-items: stretch; }
+.ph-col { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px; min-width: 0; }
+.ph-wide img { aspect-ratio: 4 / 3; object-position: 60% 50%; }
+.ph-fill { min-height: 0; }
+.ph-fill img { height: 100%; aspect-ratio: auto; object-position: 50% 45%; }
+.ph { margin: 0; overflow: hidden; background: var(--sunk); }
+.ph img { display: block; width: 100%; height: auto; max-width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+.ph-main img { aspect-ratio: 2 / 3; object-position: 50% 30%; }
+.facts dd a { color: var(--ink); overflow-wrap: anywhere; }
+.about-cta { display: flex; flex-wrap: wrap; gap: 10px 26px; }
+.facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); border-top: 1px solid var(--line); }
+.facts div { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.facts dt { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: 4px 0 0; font-weight: 600; color: var(--ink); }
+.about-body { font-size: 1.08rem; }
 .status { font-size: .9rem; color: var(--muted); min-height: 1.3em; }
 .status.err { color: var(--releg); }
 
@@ -238,7 +277,7 @@ footer #stamp { color: var(--text); }
 <footer>
   <div class="wrap">
     <span>Scores and tables via SportRadar. Win probabilities are pre-match model estimates. Transfer fees in £m as reported.</span>
-    <span>Analysis by Juan Pablo Baquero</span>
+    <span>Analysis by <a href="#about">Juan Pablo Baquero</a></span>
     <span id="stamp">Loading…</span>
   </div>
 </footer>
@@ -248,7 +287,7 @@ footer #stamp { color: var(--text); }
   "use strict";
   var LEAGUES = ["epl", "la-liga", "serie-a", "bundesliga", "ligue-1"];
   var SECTIONS = [["scores", "Scores"], ["table", "Table"], ["transfers", "Transfers"], ["analysis", "Analysis"]];
-  var data = null, posts = [], league = "home", section = "scores";
+  var data = null, posts = [], league = "home", section = "scores", article = null;
   var canPost = false, artifactNs = null, saving = false, confirmId = null;
   var draft = { kind: "analysis", league: "epl", title: "", formation: "", body: "" };
 
@@ -261,9 +300,29 @@ footer #stamp { color: var(--text); }
   var fmtStamp = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
 
   function fromHash() {
-    var h = (location.hash || "").replace("#", "");
-    if (h === "home" || LEAGUES.indexOf(h) >= 0) league = h;
+    var h = decodeURIComponent((location.hash || "").replace("#", ""));
+    article = null;
+    if (!h) return;
+    if (h === "home" || h === "about" || LEAGUES.indexOf(h) >= 0) league = h;
+    else article = h;
   }
+  var RESERVED = ["home", "about", "settings", "sidebar", "customize", "upgrade", "downloads"].concat(LEAGUES);
+  function slugify(t) {
+    var s = String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+      .replace(/['\u2019]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    if (s.length > 60) s = s.slice(0, 60).replace(/-[^-]*$/, "");
+    if (!s || RESERVED.indexOf(s) >= 0 || s.indexOf("comment-") === 0) s = "a-" + (s || "post");
+    return s;
+  }
+  function assignSlugs() {
+    var seen = {};
+    posts.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (p) {
+      var base = p.slug || slugify(p.title), s = base, n = 2;
+      while (seen[s]) s = base + "-" + n++;
+      seen[s] = 1; p._slug = s;
+    });
+  }
+  function findPost(slug) { for (var i = 0; i < posts.length; i++) if (posts[i]._slug === slug) return posts[i]; return null; }
   function teamName(L, abbr) {
     for (var i = 0; i < L.table.length; i++) if (L.table[i][0] === abbr) return L.table[i][1];
     return abbr;
@@ -303,11 +362,12 @@ footer #stamp { color: var(--text); }
 
   /* ---------- rendering ---------- */
   function renderRail() {
-    $("leagues").innerHTML = '<button class="lg" role="tab" data-league="home" aria-selected="' + (league === "home") + '">Home</button>' + LEAGUES.map(function (id) {
+    var on = article ? "" : league;
+    $("leagues").innerHTML = '<button class="lg" role="tab" data-league="home" aria-selected="' + (on === "home") + '">Home</button>' + LEAGUES.map(function (id) {
       var L = data ? data.leagues[id] : null;
-      return '<button class="lg" role="tab" data-league="' + id + '" aria-selected="' + (id === league) + '">' + esc(L ? L.short : id) + "</button>";
-    }).join("");
-    $("tabs").hidden = league === "home";
+      return '<button class="lg" role="tab" data-league="' + id + '" aria-selected="' + (id === on) + '">' + esc(L ? L.short : id) + "</button>";
+    }).join("") + '<button class="lg" role="tab" data-league="about" aria-selected="' + (on === "about") + '">About</button>';
+    $("tabs").hidden = !!article || league === "home" || league === "about";
     $("tabs").innerHTML = SECTIONS.map(function (s) {
       return '<button class="tab" role="tab" data-section="' + s[0] + '" aria-selected="' + (s[0] === section) + '">' + s[1] + "</button>";
     }).join("");
@@ -417,9 +477,9 @@ footer #stamp { color: var(--text); }
     }
     return '<article class="post' + (pitch ? " has-pitch" : "") + '">' +
       '<div class="meta"><span class="chip kind">' + (p.kind === "transfer" ? "Transfer take" : "Tactics") + '</span><span class="chip">' + esc(lg) + "</span><span>" + esc(fmtDay.format(new Date(p.date))) + "</span></div>" +
-      "<h4>" + esc(p.title) + "</h4>" +
+      '<h4><a class="title-link" href="#' + esc(p._slug) + '">' + esc(p.title) + "</a></h4>" +
       (pitch ? '<figure class="pitchwrap" style="margin:0">' + pitch + "<figcaption>" + esc(p.formation) + "</figcaption></figure>" : "") +
-      '<div class="body">' + paras + "</div>" + actions + "</article>";
+      '<div class="body"><p>' + esc(excerpt(p.body, 260)) + '</p></div><a class="cta" href="#' + esc(p._slug) + '">Read the breakdown</a>' + actions + "</article>";
   }
 
   function composer(kind) {
@@ -456,7 +516,7 @@ footer #stamp { color: var(--text); }
       '<div class="splash-in"><div><h1 class="giant">Futanalyst<span class="ten">10</span></h1></div></div>' +
       '<div class="splash-mid"><p class="splash-x">Scores, tables and transfers from Europe\'s top five leagues, and the stories behind them. Written by Juan Pablo Baquero.</p></div>' +
       '<div class="splash-low">' +
-      '<div class="splash-foot"><span>©2026</span><button class="scroll-btn" data-scroll="1">Scroll down</button></div></div></section>';
+      '<div class="splash-foot"><span>©2026</span><button class="scroll-cue" data-scroll="1" aria-label="Scroll to the latest breakdown"><span class="cue-track"><span class="cue-dot"></span></span></button><span></span></div></div></section>';
   }
 
   function viewHome() {
@@ -466,7 +526,7 @@ footer #stamp { color: var(--text); }
     if (lead) {
       html += '<section class="latest reveal"><div class="eyebrow">Latest · Decrypting Fútbol · ' + esc(leagueShort(lead.league)) + '</div>' +
         '<h2 class="latest-h">' + esc(lead.title) + '</h2><p class="hero-x">' + esc(excerpt(lead.body, 200)) + "</p>" +
-        '<button class="cta" data-goto="' + target(lead) + '">Read the breakdown</button></section>';
+        '<a class="cta" href="#' + esc(lead._slug) + '">Read the breakdown</a></section>';
     }
     html += '<section class="reveal"><h3 class="sec">Top of the five</h3><div class="rows">' + LEAGUES.map(function (id) {
       var L = data.leagues[id], t = L.table, gap = t[0][5] - t[1][5];
@@ -480,7 +540,7 @@ footer #stamp { color: var(--text); }
     }).join("") + "</div></section>";
     if (sorted.length > 1) {
       html += '<section class="reveal"><h3 class="sec">More Decrypting Fútbol</h3><div class="rows">' + sorted.slice(1, 6).map(function (p) {
-        return '<button class="row-btn" data-goto="' + target(p) + '"><span class="r-lg">' + esc(leagueShort(p.league)) + '</span><span class="r-main">' + esc(p.title) + '</span><span class="r-go" aria-hidden="true">→</span></button>';
+        return '<a class="row-btn" href="#' + esc(p._slug) + '"><span class="r-lg">' + esc(leagueShort(p.league)) + '</span><span class="r-main">' + esc(p.title) + '</span><span class="r-go" aria-hidden="true">→</span></a>';
       }).join("") + "</div></section>";
     }
     return html;
@@ -528,10 +588,67 @@ footer #stamp { color: var(--text); }
     els.forEach(function (el) { revealIO.observe(el); });
   }
 
+
+  /* ---------- article page ---------- */
+  function articleURL(p) { return location.href.split("#")[0] + "#" + p._slug; }
+  function viewArticle(p) {
+    var pitch = pitchSVG(p.formation), back = (p.league === "all" ? "epl" : p.league) + "|" + (p.kind === "transfer" ? "transfers" : "analysis");
+    var paras = String(p.body || "").split(/\n{2,}/).map(function (para) { return "<p>" + esc(para).replace(/\n/g, "<br>") + "</p>"; }).join("");
+    var others = posts.filter(function (x) { return x !== p; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 4);
+    return '<article class="story"><button class="back" data-goto="' + back + '">← ' + esc(leagueShort(p.league)) + "</button>" +
+      '<div class="meta"><span class="chip kind">Decrypting Fútbol</span><span class="chip">' + esc(leagueShort(p.league)) + "</span><span>" + esc(fmtDay.format(new Date(p.date))) + "</span><span>By Juan Pablo Baquero</span></div>" +
+      '<h2 class="story-h">' + esc(p.title) + "</h2>" +
+      (pitch ? '<figure class="pitchwrap story-pitch">' + pitch + "<figcaption>" + esc(p.formation) + "</figcaption></figure>" : "") +
+      '<div class="body story-body">' + paras + "</div>" +
+      '<div class="share"><button class="cta" data-copy="' + esc(p._slug) + '">Copy link to this article</button><span class="status" id="share-status" role="status"></span>' +
+      '<input class="share-url" id="share-url" readonly hidden value="' + esc(articleURL(p)) + '" aria-label="Article link"></div></article>' +
+      (others.length ? '<section><h3 class="sec">More Decrypting Fútbol</h3><div class="rows">' + others.map(function (x) {
+        return '<a class="row-btn" href="#' + esc(x._slug) + '"><span class="r-lg">' + esc(leagueShort(x.league)) + '</span><span class="r-main">' + esc(x.title) + '</span><span class="r-go" aria-hidden="true">→</span></a>';
+      }).join("") + "</div></section>" : "");
+  }
+
+  /* ---------- about page ---------- */
+  var IG = "https://www.instagram.com/juanp_baquero/", EMAIL = "juanpablobrey@gmail.com";
+  function viewAbout() {
+    return '<section class="about"><div class="eyebrow">About</div>' +
+      '<h2 class="about-name">Juan Pablo<br>Baquero</h2>' +
+      '<div class="about-photos"><figure class="ph ph-main"><img src="about-6.jpg" alt="Juan Pablo Baquero on the pitch for Monomoy, wearing number 6 and the captain\'s armband" width="900" height="1350" loading="lazy"></figure>' +
+      '<div class="ph-col"><figure class="ph ph-wide"><img src="about-worldcup.jpg" alt="Juan Pablo Baquero with his family in Colombia shirts at a 2026 World Cup match" width="1000" height="750" loading="lazy"></figure>' +
+      '<figure class="ph ph-fill"><img src="about-portrait.jpg" alt="Portrait of Juan Pablo Baquero by the sea" width="900" height="1200" loading="lazy"></figure></div></div>' +
+      '<dl class="facts">' +
+      '<div><dt>School</dt><dd>Monomoy Regional High School</dd></div>' +
+      '<div><dt>Plays</dt><dd>Monomoy soccer · No. 6 · Captain</dd></div>' +
+      '<div><dt>Writes</dt><dd>Decrypting Fútbol</dd></div>' +
+      '<div><dt>Instagram</dt><dd><a href="' + IG + '" target="_blank" rel="noopener">@juanp_baquero</a></dd></div>' +
+      '<div><dt>Email</dt><dd><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></dd></div></dl>' +
+      '<div class="body about-body"><p>I\'m Juan Pablo Baquero, a student at Monomoy Regional High School, where I wear the number 6 and captain the soccer team.</p>' +
+      '<p>Futanalyst10 is where I write about the world\'s game: tactics, transfers and the stories behind Europe\'s top five leagues. Decrypting Fútbol is my series of breakdowns, and the scores and tables here update every day.</p>' +
+      '<p>For questions or collaborations, message me on Instagram or send me an email.</p></div>' +
+      '<div class="about-cta"><a class="cta" href="' + IG + '" target="_blank" rel="noopener">Instagram</a><a class="cta" href="mailto:' + EMAIL + '">Email me</a></div></section>';
+  }
+
+  /* ---------- splash parallax ---------- */
+  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches), ticking = false;
+  function onSplashScroll() {
+    ticking = false;
+    var sp = document.querySelector(".splash");
+    if (!sp) return;
+    var y = window.scrollY, h = sp.offsetHeight || 1, k = Math.min(1, y / (h * 0.7));
+    var bg = sp.querySelector(".splash-bg"), inn = sp.querySelectorAll(".splash-in, .splash-mid, .splash-low");
+    if (bg) bg.style.transform = "translate3d(0," + (y * 0.35).toFixed(1) + "px,0) scale(1.04)";
+    inn.forEach(function (el) { el.style.opacity = (1 - k).toFixed(3); });
+  }
+  if (!reduceMotion) window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onSplashScroll); } }, { passive: true });
+
   function render() {
     renderRail();
     if (!data) return;
-    document.body.classList.toggle("is-home", league === "home");
+    var p = article ? findPost(article) : null;
+    if (article && !p) { article = null; league = "home"; }
+    document.body.classList.toggle("is-home", league === "home" && !p);
+    if (p) { $("splash").innerHTML = ""; document.title = p.title + " · futanalyst10"; $("view").innerHTML = viewArticle(p); return; }
+    if (league === "about") { $("splash").innerHTML = ""; document.title = "About · futanalyst10"; $("view").innerHTML = viewAbout(); return; }
+    document.title = "futanalyst10";
     if (league === "home") { $("splash").innerHTML = splashHTML(); $("view").innerHTML = viewHome(); armReveals(); updateClock(); return; }
     $("splash").innerHTML = "";
     updateClock();
@@ -608,11 +725,19 @@ footer #stamp { color: var(--text); }
   document.addEventListener("click", function (e) {
     var t = e.target.closest("button");
     if (!t) return;
-    if (t.dataset.league) { league = t.dataset.league; if (location.hash !== "#" + league) location.hash = league; render(); return; }
-    if (t.dataset.scroll) { var sp = document.querySelector(".splash"); if (sp) window.scrollTo({ top: sp.offsetHeight - 52, behavior: "smooth" }); return; }
+    if (t.dataset.copy) {
+      var url = $("share-url"), st = $("share-status"), link = url ? url.value : location.href;
+      function fallback() { if (url) { url.hidden = false; url.focus(); url.select(); } if (st) st.textContent = "Copy the link above."; }
+      try {
+        navigator.clipboard.writeText(link).then(function () { if (st) st.textContent = "Link copied"; }, fallback);
+      } catch (err) { fallback(); }
+      return;
+    }
+    if (t.dataset.league) { article = null; league = t.dataset.league; if (location.hash !== "#" + league) location.hash = league; render(); return; }
+    if (t.dataset.scroll) { var sp = document.querySelector(".splash"); if (sp) window.scrollTo({ top: sp.offsetHeight - 60, behavior: reduceMotion ? "auto" : "smooth" }); return; }
     if (t.dataset.goto) {
       var parts = t.dataset.goto.split("|");
-      league = parts[0]; section = parts[1] || "scores"; store("fa10-section", section);
+      article = null; league = parts[0]; section = parts[1] || "scores"; store("fa10-section", section);
       if (location.hash !== "#" + league) location.hash = league;
       render(); window.scrollTo(0, 0); return;
     }
@@ -624,20 +749,21 @@ footer #stamp { color: var(--text); }
       save(posts.filter(function (p) { return p.id !== id; }), "Deleted");
     }
   });
-  window.addEventListener("hashchange", function () { fromHash(); render(); });
+  window.addEventListener("hashchange", function () { fromHash(); render(); if (article || league === "about") window.scrollTo(0, 0); });
 
   /* ---------- boot ---------- */
   fromHash();
   var savedSection = store("fa10-section");
   if (savedSection && SECTIONS.some(function (s) { return s[0] === savedSection; })) section = savedSection;
   try { var dr = JSON.parse(sessionStorage.getItem("fa10-draft") || "null"); if (dr) draft = dr; } catch (e) {}
-  draft.league = league === "home" ? "epl" : league;
+  draft.league = LEAGUES.indexOf(league) >= 0 ? league : "epl";
   renderRail();
 
   function getJSON(path) { return fetch(path, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(path); return r.json(); }); }
   Promise.all([getJSON("data.json"), getJSON("posts.json").catch(function () { return { posts: [] }; })]).then(function (res) {
     data = res[0]; posts = (res[1] && res[1].posts) || [];
     LEAGUES.forEach(function (id) { if (data.leagues[id]) data.leagues[id]._id = id; });
+    assignSlugs();
     $("stamp").textContent = "Updated " + fmtStamp.format(new Date(data.updated));
     render();
   }).catch(function () {
